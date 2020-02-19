@@ -24,6 +24,7 @@ class Client(Thread):
             r, w, e = select.select((self.client,), (), (), 0)
             if r:
                 data = self.client.recv(4096)
+                print("client receive: ", data)
                 if data:
                     self.server.sendall(data)
                 else:

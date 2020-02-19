@@ -21,6 +21,7 @@ class Server(Thread):
             r, w, e = select.select((self.server,), (), (), 0)
             if r:
                 data = self.server.recv(4096)
+                print("server receive: ", data)
                 if data:
                     self.client.sendall(data)
                 else:
