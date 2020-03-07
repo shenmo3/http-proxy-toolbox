@@ -31,14 +31,22 @@ if __name__ == '__main__':
                 setting.jitter[0] = int(cmd[1])
                 setting.jitter[1] = int(cmd[2])
                 print("jitter set to ", setting.jitter)
-            elif cmd[0] == "blacklist":
-                setting.black_list.append(cmd[1])
-                print("black list set to ", setting.black_list)
-            elif cmd[0] == "whitelist":
-                setting.white_list.append(cmd[1])
-                print("white list set to ", setting.white_list)
-            # TODO: delete from list
+            elif cmd[0] == "acl":
+                if cmd[1] == "add" or cmd[1] == "-a":
+                    setting.acl[cmd[2]] = (cmd[3] == "accept")
+                    print("acl entry added: ", cmd[2], "->", setting.acl[cmd[2]])
+                elif cmd[1] == "delete" or cmd[1] == "-d":
+                    if cmd[2] != "default":
+                        del setting.acl[cmd[2]]
+                        print("acl entry deleted: ", cmd[2])
+                    else:
+                        print("you cannot delete the default acl, you can only use add to set it.")
+                elif cmd[1] == "show":
+                    print(setting.acl)
+                else:
+                    raise Exception("Unknown ACL sub-command")
             else:
                 print("Unknown command:", cmd)
         except Exception as e:
             print("Unknown command:", "".join(cmd))
+            print(e)

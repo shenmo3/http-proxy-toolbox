@@ -14,7 +14,7 @@ class Client(Thread):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((host, port))
         sock.listen(1)
-        self.client, addr = sock.accept()
+        self.client, self.addr = sock.accept()
         self.server = None
         self.event = event
         self.shut = False

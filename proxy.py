@@ -22,6 +22,17 @@ class Proxy(Thread):
             self.client = Client(self.from_host, self.client_port, self.event, self.setting)
             self.server = Server(self.to_host, self.server_port, self.event, self.setting)
             print("connection established on:", self.client_port)
+            if self.client.addr in self.setting.acl:
+                if not self.setting.acl[self.client.addr]:
+                    self.client = None
+                    self.server = None
+                    print("connection", self.client.addr, "terminated by ACL")
+                    continue
+            elif not self.setting.acl["default"]:
+                self.client = None
+                self.server = None
+                print("connection", self.client.addr, "terminated by default ACL")
+                continue
             self.client.server = self.server.server
             self.server.client = self.client.client
             self.client.start()
