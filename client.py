@@ -25,6 +25,11 @@ class Client(Thread):
         while True:
             if self.shut:
                 break
+            if self.setting.client_msg:
+                msg = self.setting.client_msg.encode("ISO-8859-1")
+                self.setting.client_msg = ""
+                self.server.sendall(msg)
+                print("proxy -> client: ", msg)
             r, w, e = select.select((self.client,), (), (), 0)
             if r:
                 data = self.client.recv(4096)
@@ -32,7 +37,7 @@ class Client(Thread):
                 if data:
                     # delay
                     if delay:
-                        time.sleep(self.setting.delay)
+                        time.sleep(self.setting.delay + random.gauss(self.setting.jitter[0], self.setting.jitter[1]))
                         delay = False
                     # loss
                     if random.random() > self.setting.loss:

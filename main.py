@@ -15,8 +15,12 @@ if __name__ == '__main__':
         cmd = ""
         try:
             cmd = input("% ").split()
-            if cmd[0] == "exit":
+            if cmd[0] == "quit":
                 os._exit(0)
+            elif cmd[0] == "C":
+                setting.client_msg += " ".join(cmd[1:]) + "\r\n"
+            elif cmd[0] == "S":
+                setting.server_msg += " ".join(cmd[1:]) + "\r\n"
             elif cmd[0] == "loss":
                 setting.loss = int(cmd[1])
                 print("loss set to ", setting.loss)
@@ -24,7 +28,8 @@ if __name__ == '__main__':
                 setting.delay = int(cmd[1])
                 print("delay set to ", setting.delay)
             elif cmd[0] == "jitter":
-                setting.jitter = int(cmd[1])
+                setting.jitter[0] = int(cmd[1])
+                setting.jitter[1] = int(cmd[2])
                 print("jitter set to ", setting.jitter)
             elif cmd[0] == "blacklist":
                 setting.black_list.append(cmd[1])
