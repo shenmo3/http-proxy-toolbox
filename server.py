@@ -1,8 +1,10 @@
 from threading import Thread, Event
+import parser
 import socket
 import select
 import random
 import time
+import importlib
 
 
 class Server(Thread):
@@ -30,7 +32,8 @@ class Server(Thread):
             r, w, e = select.select((self.server,), (), (), 0)
             if r:
                 data = self.server.recv(4096)
-                print("server send: ", data)
+                importlib.reload(parser)
+                data = parser.server_parser(data)
                 if data:
                     # delay
                     if delay:
