@@ -24,7 +24,7 @@ class Proxy(Thread):
                 self.server = Server(self.to_host, self.server_port, self.event, self.setting)
                 print("[*]Connection established on client:" + str(self.client_port) + ", and server: " + str(self.to_host))
             else:
-                print (("[*]Connection established on:", self.client_port))
+                print("[*]Connection established on:", self.client_port)
 
             if self.client.addr in self.setting.acl:
                 if not self.setting.acl[self.client.addr]:
