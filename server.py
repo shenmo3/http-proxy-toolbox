@@ -17,7 +17,7 @@ class Server(Thread):
             self.server.connect((host, port))
         except:
             self.server = None
-            print ("ERROR: failed to connect with unknown host ", host)
+            print ("\nERROR: failed to connect with unknown host ", host)
         self.client = None
         self.event = event
         self.shut = False
@@ -25,6 +25,9 @@ class Server(Thread):
 
     def run(self):
         delay = True
+        if not self.server:
+            return
+
         while True:
             if self.shut:
                 break
@@ -32,34 +35,27 @@ class Server(Thread):
                 msg = self.setting.server_msg.encode("ISO-8859-1")
                 self.setting.server_msg = ""
                 self.client.sendall(msg)
-                print("[==>] Proxy to server: ", msg)
+                print("\n[==>] Proxy to server: ", msg)
 
-            if not self.server:
-                break
             r, w, e = select.select((self.server,), (), (), 0)
             if r:
-                try:
-                    data = self.server.recv(4096)
-                    importlib.reload(parser)
-                    data = parser.server_parser(data)
-                    if data:
-                        # delay
-                        if delay:
-                            time.sleep(
-                                self.setting.delay + random.gauss(self.setting.jitter[0], self.setting.jitter[1]))
-                            delay = False
-                        # loss
-                        if random.random() > self.setting.loss:
-                            self.client.sendall(data)
-                            print("[<==] Proxy sent back to client ", self.client)
-                    else:
-                        self.event.set()
-                        break
-                except:
-                    # Server timeout
-                    print ("[!] Server Timeout: connection reset by peer.")
-
+                data = self.server.recv(4096)
+                importlib.reload(parser)
+                data = parser.server_parser(data)
+                if data:
+                    # delay
+                    if delay:
+                        time.sleep(
+                            self.setting.delay + random.gauss(self.setting.jitter[0], self.setting.jitter[1]))
+                        delay = False
+                    # loss
+                    if random.random() > self.setting.loss:
+                        self.client.sendall(data)
+                        print("\n[<==] Proxy sent back to client ", self.client)
+                else:
+                    self.event.set()
+                    break
             else:
                 delay = True
 
-        print("[*] Server closed")
+        print("[*] Server closed.")

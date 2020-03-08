@@ -56,6 +56,7 @@ class Proxy(Thread):
                     self.server.client = self.client.client
                     print("[*]Client.server: ",self.client.server)
                     print("[*]Server.client: ", self.server.client)
+
             self.client.server = self.server.server
             self.server.client = self.client.client
             self.client.start()
