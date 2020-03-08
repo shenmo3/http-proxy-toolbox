@@ -13,7 +13,11 @@ class Server(Thread):
         self.port = port
         self.host = host
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.connect((host, port))
+        try:
+            self.server.connect((host, port))
+        except:
+            self.server = None
+            print ("\nERROR: failed to connect with unknown host ", host)
         self.client = None
         self.event = event
         self.shut = False
@@ -22,6 +26,9 @@ class Server(Thread):
     def run(self):
         # try:
         delay = True
+        if not self.server:
+            return
+
         while True:
             if self.shut:
                 self.server.close()
@@ -30,7 +37,8 @@ class Server(Thread):
                 msg = self.setting.server_msg.encode("ISO-8859-1")
                 self.setting.server_msg = ""
                 self.client.sendall(msg)
-                print("proxy -> server: ", msg)
+                print("\n[==>] Proxy to server: ", msg)
+
             r, w, e = select.select((self.server,), (), (), 0)
             if r:
                 data = self.server.recv(4096)
@@ -42,17 +50,19 @@ class Server(Thread):
                 if data:
                     # delay
                     if delay:
-                        time.sleep(self.setting.delay + random.gauss(self.setting.jitter[0], self.setting.jitter[1]))
+                        time.sleep(
+                            self.setting.delay + random.gauss(self.setting.jitter[0], self.setting.jitter[1]))
                         delay = False
                     # loss
                     if random.random() > self.setting.loss:
                         self.client.sendall(data)
+                        print("\n[<==] Proxy sent back to client ", self.client)
                 else:
                     self.event.set()
                     break
             else:
                 delay = True
-        print("server closed")
         # except Exception as e:
         #     print("server", self.port, e)
         #     self.event.set()
+        print("[*] Server closed.")
