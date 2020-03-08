@@ -20,7 +20,7 @@ class Proxy(Thread):
             self.event.clear()
             print("[%]Waiting for connection on:", self.client_port)
             self.client = Client(self.from_host, self.client_port, self.event, self.setting)
-            if (self.to_host != "0.0.0.0"):
+            if self.to_host != "0.0.0.0":
                 self.server = Server(self.to_host, self.server_port, self.event, self.setting)
                 print("[*]Connection established on client:" + str(self.client_port) + ", and server: " + str(self.to_host))
             else:
@@ -38,39 +38,30 @@ class Proxy(Thread):
                 print("[!]Connection", self.client.addr, "terminated by default ACL")
                 continue
 
-            if (self.to_host != "0.0.0.0"):
-                self.client.server = self.server.server
-                self.server.client = self.client.client
-                self.client.start()
-                self.server.start()
-                self.event.wait()
-                if self.server.is_alive():
-                    self.server.shut = True
-                if self.client.is_alive():
-                    self.client.shut = True
             # Parse the client request and set server
-            else:
+            if self.to_host == "0.0.0.0":
                 webserver, port = self.client.get_request()
                 # Shut down the server if parse not successfully
-                if (webserver == -1) and (port == -1):
+                if webserver == -1 and port == -1:
                     if self.server and self.server.is_alive():
                         self.server.shut = True
                     if self.client and self.client.is_alive():
                         self.client.shut = True
-                    self.event.wait()
-                    break
+                    continue
                 else:
                     self.server = Server(webserver, port, self.event, self.setting)
                     if self.server.server:
                         print("[*]Connection established on client:" + str(self.client_port) + ", and server: " + str(webserver))
                     self.client.server = self.server.server
                     self.server.client = self.client.client
-                    print ("[*]Client.server: ",self.client.server)
-                    print ("[*]Server.client: ", self.server.client)
-                    self.client.start()
-                    self.server.start()
-                    self.event.wait()
-                    if self.server.is_alive():
-                        self.server.shut = True
-                    if self.client.is_alive():
-                        self.client.shut = True
+                    print("[*]Client.server: ",self.client.server)
+                    print("[*]Server.client: ", self.server.client)
+            self.client.server = self.server.server
+            self.server.client = self.client.client
+            self.client.start()
+            self.server.start()
+            self.event.wait()
+            if self.server.is_alive():
+                self.server.shut = True
+            if self.client.is_alive():
+                self.client.shut = True
