@@ -24,12 +24,14 @@ class Server(Thread):
         self.setting = setting
 
     def run(self):
+        # try:
         delay = True
         if not self.server:
             return
 
         while True:
             if self.shut:
+                self.server.close()
                 break
             if self.setting.server_msg:
                 msg = self.setting.server_msg.encode("ISO-8859-1")
@@ -40,8 +42,11 @@ class Server(Thread):
             r, w, e = select.select((self.server,), (), (), 0)
             if r:
                 data = self.server.recv(4096)
-                importlib.reload(parser)
-                data = parser.server_parser(data)
+                try:
+                    importlib.reload(parser)
+                    data = parser.server_parser(data, self.port)
+                except Exception as e:
+                    print("server parser error", self.port, e)
                 if data:
                     # delay
                     if delay:
@@ -57,5 +62,7 @@ class Server(Thread):
                     break
             else:
                 delay = True
-
+        # except Exception as e:
+        #     print("server", self.port, e)
+        #     self.event.set()
         print("[*] Server closed.")

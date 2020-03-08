@@ -26,6 +26,7 @@ class Client(Thread):
         self.origin_request = None
 
     def run(self):
+        # try:
         delay = True
         # Handle the first request
         if self.origin_request and self.server:
@@ -42,6 +43,7 @@ class Client(Thread):
 
         while True:
             if self.shut:
+                self.client.close()
                 break
             if self.setting.client_msg:
                 msg = self.setting.client_msg.encode("ISO-8859-1")
@@ -52,9 +54,12 @@ class Client(Thread):
             r, w, e = select.select((self.client,), (), (), 0)
             if r :
                 data = self.client.recv(4096)
+                try:
+                    importlib.reload(parser)
+                    data = parser.client_parser(data, self.port)
+                except Exception as e:
+                    print("client parser error", self.port, e)
 
-                importlib.reload(parser)
-                data = parser.client_parser(data)
                 if data:
                     # delay
                     if delay:
@@ -68,6 +73,9 @@ class Client(Thread):
                     break
             else:
                 delay = True
+        # except Exception as e:
+        #     print("client", self.port, e)
+        #     self.event.set()
         print("[*]Client closed.")
 
 
