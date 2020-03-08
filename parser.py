@@ -1,8 +1,8 @@
 def client_parser(data):
-    print("client send:", data)
+    print("[==>] Client send data:", data)
     return data
 
 
 def server_parser(data):
-    print("server send:", data)
+    print("[<==]Server send:", data)
     return data

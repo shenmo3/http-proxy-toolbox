@@ -7,7 +7,7 @@ if __name__ == '__main__':
     proxy_servers = []
     for port in [80]:
         # TODO: setting feature toggle for performance
-        temp = Proxy("0.0.0.0", "172.217.5.110", port, 3456, setting)
+        temp = Proxy("0.0.0.0", "0.0.0.0", port, 3456, setting)
         temp.start()
         proxy_servers.append(temp)
 
