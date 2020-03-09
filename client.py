@@ -75,6 +75,7 @@ class Client(Thread):
             print("[*]Client closed.")
         except Exception as e:
             print("client", self.port, e)
+            self.client.close()
             self.event.set()
 
     def get_request(self):

@@ -65,4 +65,5 @@ class Server(Thread):
             print("[*]Server closed.")
         except Exception as e:
             print("server", self.port, e)
+            self.server.close()
             self.event.set()
