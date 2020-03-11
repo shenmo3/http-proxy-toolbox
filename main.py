@@ -8,7 +8,8 @@ if __name__ == '__main__':
     for port in [80]:
         # TODO: setting feature toggle for performance
         for local_port in [3456]:
-            temp = Proxy("0.0.0.0", "0.0.0.0", port, local_port, setting)
+            temp = Proxy(client_address = "0.0.0.0", server_address = "0.0.0.0", 
+                         client_port = local_port, server_port = port, setting)
             temp.start()
             proxy_servers.append(temp)
 
@@ -26,7 +27,7 @@ if __name__ == '__main__':
                 setting.loss = float(cmd[1])
                 print("loss set to", setting.loss)
             elif cmd[0] == "delay":
-                setting.delay = int(cmd[1])
+                setting.delay = float(cmd[1])
                 print("delay set to", setting.delay)
             elif cmd[0] == "jitter":
                 setting.jitter[0] = int(cmd[1])
