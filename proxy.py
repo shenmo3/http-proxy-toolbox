@@ -31,9 +31,10 @@ class Proxy(Thread):
 
             if self.client.addr[0] in self.setting.acl:
                 if not self.setting.acl[self.client.addr[0]]:
+                    addr = self.client.addr
                     self.client = None
                     self.server = None
-                    print("[!]Connection", self.client.addr, "terminated by ACL")
+                    print("[!]Connection", addr, "terminated by ACL")
                     continue
             elif not self.setting.acl["default"]:
                 addr = self.client.addr
