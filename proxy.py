@@ -4,10 +4,10 @@ from threading import Thread, Event
 
 
 class Proxy(Thread):
-    def __init__(self, from_host, to_host, server_port, client_port, setting=None):
+    def __init__(self, client_address, server_address, client_port, server_port, setting=None):
         super(Proxy, self).__init__()
-        self.from_host = from_host
-        self.to_host = to_host
+        self.from_host = client_address
+        self.to_host = server_address
         self.server_port = server_port
         self.client_port = client_port
         self.client = None
