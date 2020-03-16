@@ -14,10 +14,10 @@ def requset_handler(origin_request):
     # get url
     try:
         url = first_line.split(' ')[1]
-        print (url)
+        #print (url)
     except:
-        print ("Parse error happens")
-        print (first_line.split(' '))
+        print ("Parse error happens.")
+        print ("Failed to parse:",first_line.split(' '))
         return (-1, -1)
 
     # find the webserver and port

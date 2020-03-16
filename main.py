@@ -9,7 +9,7 @@ if __name__ == '__main__':
         # TODO: setting feature toggle for performance
         for local_port in [3456]:
             temp = Proxy(client_address = "0.0.0.0", server_address = "0.0.0.0", 
-                         client_port = local_port, server_port = port, setting)
+                         client_port = local_port, server_port = port, setting = setting)
             temp.start()
             proxy_servers.append(temp)
 
